@@ -23,8 +23,15 @@ interface DisclaimerProps {
  * script-executing link would be exactly the kind of security regression
  * this component must never produce. An unsafe href is treated the same as
  * a missing one: rendered as the disabled placeholder, never as a link.
+ *
+ * Invariant (SEC-1): an unsafe href never renders as an `<a>`. It is always
+ * rendered as the disabled placeholder (`aria-disabled="true"`,
+ * `tabIndex={-1}`, `title="Coming soon"`), so a caller cannot recover a
+ * clickable link without passing a href that `isSafeHref` accepts.
+ *
+ * Exported so the classification boundary can be unit-tested directly.
  */
-function isSafeHref(href: string): boolean {
+export function isSafeHref(href: string): boolean {
   const trimmed = href.trim()
   if (trimmed === '') return false
   // A leading "//" is protocol-relative and resolves to whatever external
@@ -44,6 +51,14 @@ function isSafeHref(href: string): boolean {
  * Unobtrusive risk / non-financial-advice disclaimer.
  * Placed below primary page content; styled as secondary text.
  * Replace termsHref with the real URL once available from backend.
+ *
+ * Render contract:
+ * - The body text and context are always rendered verbatim; prop changes never
+ *   discard user-visible content (no silent data loss).
+ * - `termsHref`/`learnMoreHref` render as a clickable `<a>` only when `isSafeHref`
+ *   accepts them; anything else (including `#`, empty, or an unsafe scheme)
+ *   renders as the disabled placeholder. This is deterministic for every input.
+ * - Public props (`context`, `termsHref`, `learnMoreHref`) are unchanged.
  */
 export default function Disclaimer({
   context,
