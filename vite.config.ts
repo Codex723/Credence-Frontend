@@ -84,6 +84,7 @@ export default defineConfig({
         'src/components/AmountInput.tsx',
         'src/components/Badge.tsx',
         'src/components/BackToTop.tsx',
+        'src/components/Disclaimer.tsx',
         'src/components/controls/Select.tsx',
         'src/components/controls/Toggle.tsx',
         'src/hooks/useLocalStorage.ts',
@@ -108,6 +109,15 @@ export default defineConfig({
         // BackToTop guards every DOM/window call in its click handler, so each
         // catch arm is a reachable branch that must stay covered.
         'src/components/BackToTop.tsx': {
+          lines: 100,
+          branches: 100,
+          functions: 100,
+          statements: 100,
+        },
+        // Disclaimer renders user-facing legal links; an unsafe href must never
+        // become a clickable link (SEC-1), so every branch of isSafeHref and the
+        // placeholder-vs-link render path is held at full coverage.
+        'src/components/Disclaimer.tsx': {
           lines: 100,
           branches: 100,
           functions: 100,
